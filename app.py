@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_file, request
+from flask import Flask, render_template, request, redirect, url_for
 import os
 import subprocess
 app = Flask(__name__)
@@ -38,6 +38,26 @@ def index():
             subprocess.run(uvtools_cmd)
 
     return render_template("index.html", jobs=get_jobs())
+
+# Remove a file from the list by removing it from the filesystem
+@app.route("/remove/<stl_file>")
+def remove(stl_file):
+    stl_path = f"static/{stl_file}"
+    sl1_path = f"static/{stl_file.rsplit('.stl', 1)[0]}.sl1"
+    pwma_path = f"static/{stl_file.rsplit('.stl', 1)[0]}.pwma"
+    try:
+        os.remove(stl_path)
+    except:
+        pass
+    try:
+        os.remove(sl1_path)
+    except:
+        pass
+    try:
+        os.remove(pwma_path)
+    except:
+        pass
+    return redirect(url_for("index"))
 
 if __name__ == "__main__":
     app.run(debug=True)

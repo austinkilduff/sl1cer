@@ -26,12 +26,14 @@
 				<th>stl File</th>
 				<th>sl1 File</th>
 				<th>pwma File</th>
+				<th></th>
 			</tr>
 			{% for job in jobs %}
 			<tr>
 				<td><a href="static/{{ job["stl_file"] }}">{{ job["stl_file"] }}</a></td>
 				<td><a href="static/{{ job["sl1_file"] }}">{{ job["sl1_file"] }}</a></td>
 				<td><a href="static/{{ job["pwma_file"] }}">{{ job["pwma_file"] }}</a></td>
+				<td><a href="remove/{{ job["stl_file"] }}">Remove</a></td>
 			</tr>
 			{% endfor %}
 		</table>
