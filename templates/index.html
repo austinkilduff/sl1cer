@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<title>sl1cer</title>
+	</head>
+	<body>
+		<h1>sl1cer</h1>
+		<p>Convert an stl file to an sl1 with Prusa Slicer, then to a pwma with UVtools<p>
+		<hr/>
+		<h3>Upload</h3>
+		<form method="POST" enctype="multipart/form-data">
+			<label for="stl_file">STL File:</label>
+  			<input type="file" id="stl_file" name="stl_file" accept=".stl"/>
+			<br/>
+			<br/>
+			<label for="supports">Supports Enabled?</label>
+  			<input type="checkbox" id="supports" name="supports"/>
+			<br/>
+			<br/>
+			<input type="submit">
+		</form>
+		<hr/>
+		<h3>Jobs</h3>
+		{% if jobs|length > 0 %}
+		<table>
+			<tr>
+				<th>stl File</th>
+				<th>sl1 File</th>
+				<th>pwma File</th>
+			</tr>
+			{% for job in jobs %}
+			<tr>
+				<td><a href="static/{{ job["stl_file"] }}">{{ job["stl_file"] }}</a></td>
+				<td><a href="static/{{ job["sl1_file"] }}">{{ job["sl1_file"] }}</a></td>
+				<td><a href="static/{{ job["pwma_file"] }}">{{ job["pwma_file"] }}</a></td>
+			</tr>
+			{% endfor %}
+		</table>
+		{% else %}
+		<p>No jobs in history</p>
+		{% endif %}
+	</body>
+</html>
