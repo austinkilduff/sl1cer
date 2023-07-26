@@ -3,6 +3,9 @@ import os
 import subprocess
 app = Flask(__name__)
 
+if not os.path.exists("static"):
+    os.makedirs("static")
+
 def get_jobs():
     jobs = []
     filenames = os.listdir("static")
