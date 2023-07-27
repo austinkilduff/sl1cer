@@ -34,11 +34,11 @@ def index():
 
         sl1_filename = f"{stl_filename.rsplit('.stl', 1)[0]}.sl1"
         prusa_cmd = ["prusa-slicer", "--load", f"{base_dir}/config_supports_{supports_status}.ini", "--sla", f"{base_dir}/static/{stl_filename}", "--output", f"{base_dir}/static/{sl1_filename}"]
-        subprocess.run(prusa_cmd)
+        prusa_output = subprocess.run(prusa_cmd, capture_output=True)
         if sl1_filename in os.listdir(f"{base_dir}/static"):
             pwma_filename = f"{stl_filename.rsplit('.stl', 1)[0]}.pwma"
-            uvtools_cmd = ["uvtools", "--cmd", "convert", f"{base_dir}/static/{sl1_filename}", "auto", f"{base_dir}/static/{pwma_filename}"]
-            subprocess.run(uvtools_cmd)
+            uvtools_cmd = ["/root/UVtools.AppImage", "--cmd", "convert", f"{base_dir}/static/{sl1_filename}", "auto", f"{base_dir}/static/{pwma_filename}"]
+            uvtools_output = subprocess.run(uvtools_cmd, capture_output=True)
 
     return render_template("index.html", jobs=get_jobs())
 
