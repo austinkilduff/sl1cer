@@ -3,10 +3,10 @@ import os
 import subprocess
 app = Flask(__name__)
 
-if not os.path.exists("static"):
-    os.makedirs("static")
-
 base_dir = "/var/www/sl1cer"
+
+if not os.path.exists(f"{base_dir}/static"):
+    os.makedirs(f"{base_dir}/static")
 
 def get_jobs():
     jobs = []
