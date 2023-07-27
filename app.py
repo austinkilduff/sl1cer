@@ -6,9 +6,11 @@ app = Flask(__name__)
 if not os.path.exists("static"):
     os.makedirs("static")
 
+base_dir = "/var/www/sl1cer"
+
 def get_jobs():
     jobs = []
-    filenames = os.listdir("static")
+    filenames = os.listdir(f"{base_dir}/static")
     stl_filenames = [filename.rsplit(".stl", 1)[0] for filename in filenames if filename.endswith(".stl")]
     sl1_filenames = [filename.rsplit(".sl1", 1)[0] for filename in filenames if filename.endswith(".sl1")]
     pwma_filenames = [filename.rsplit(".pwma", 1)[0] for filename in filenames if filename.endswith(".pwma")]
@@ -27,14 +29,15 @@ def index():
     if request.method == "POST":
         stl_file = request.files["stl_file"]
         stl_filename = stl_file.filename.replace(" ", "_").lower()
-        stl_file.save(f"static/{stl_filename}")
+        stl_file.save(f"{base_dir}/static/{stl_filename}")
         supports_status = "enabled" if "supports" in request.form else "disabled"
 
-        prusa_cmd = ["prusa-slicer", "--load", f"config_supports_{supports_status}.ini", "--sla", f"static/{stl_filename}"]
-        subprocess.run(prusa_cmd)
         sl1_filename = f"{stl_filename.rsplit('.stl', 1)[0]}.sl1"
-        if sl1_filename in os.listdir("static"):
-            uvtools_cmd = ["uvtools", "--cmd", "convert", f"static/{sl1_filename}", "auto"]
+        prusa_cmd = ["prusa-slicer", "--load", f"{base_dir}/config_supports_{supports_status}.ini", "--sla", f"{base_dir}/static/{stl_filename}", "--output", f"{base_dir}/static/{sl1_filename}"]
+        subprocess.run(prusa_cmd)
+        if sl1_filename in os.listdir(f"{base_dir}/static"):
+            pwma_filename = f"{stl_filename.rsplit('.stl', 1)[0]}.pwma"
+            uvtools_cmd = ["uvtools", "--cmd", "convert", f"{base_dir}/static/{sl1_filename}", "auto", f"{base_dir}/static/{pwma_filename}"]
             subprocess.run(uvtools_cmd)
 
     return render_template("index.html", jobs=get_jobs())
@@ -42,9 +45,9 @@ def index():
 # Remove a file from the list by removing it from the filesystem
 @app.route("/remove/<stl_file>")
 def remove(stl_file):
-    stl_path = f"static/{stl_file}"
-    sl1_path = f"static/{stl_file.rsplit('.stl', 1)[0]}.sl1"
-    pwma_path = f"static/{stl_file.rsplit('.stl', 1)[0]}.pwma"
+    stl_path = f"{base_dir}/static/{stl_file}"
+    sl1_path = f"{base_dir}/static/{stl_file.rsplit('.stl', 1)[0]}.sl1"
+    pwma_path = f"{base_dir}/static/{stl_file.rsplit('.stl', 1)[0]}.pwma"
     try:
         os.remove(stl_path)
     except:
